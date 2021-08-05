@@ -1,4 +1,5 @@
 const { Article, User, Comment } = require("../model")
+const mongoose = require('mongoose')
 
 // 获取文章列表
 exports.getArticles =  async (req, res, next) => {
@@ -111,7 +112,9 @@ exports.addComments =  async (req, res, next) => {
         // 处理请求
         const comment = new Comment(req.body.comment)
         comment.author = req.user._id
+        comment.articleId = req.params.articleId
         comment.populate('author').execPopulate()
+        comment.populate('articleId').execPopulate()
         await comment.save()
         res.status(201).json({
             comment: comment
@@ -125,7 +128,14 @@ exports.addComments =  async (req, res, next) => {
 exports.getComments =  async (req, res, next) => {
     try {
         // 处理请求
-        res.send('get /articles/:slug/comments 从文章中获取评论')
+        console.log(req.params.articleId.toString())
+        const comments = await Comment.find({
+            articleId: mongoose.Types.ObjectId(req.params.articleId)
+        }).populate('articleId').populate('author')
+       
+        res.status(200).json({
+            comments: comments
+        })
     } catch (err) {
         next(err)
     }
@@ -135,7 +145,16 @@ exports.getComments =  async (req, res, next) => {
 exports.deleteComments =  async (req, res, next) => {
     try {
         // 处理请求
-        res.send('delete /articles/:slug/comments/:id 删除评论')
+        console.log(req.article)
+        console.log(req.comments)
+        // 如果当前登录的用户的id = article.author,则说明这个评论是评论的当前登录用户所发表的文章，则可以允许他删除该评论
+        if(req.user._id.toString() !== req.article.author.toString() && req.user._id.toString() !== req.comments.author.toString()) {
+            return res.status(403).json({
+                errors: '你不是这篇被评论的文章的作者或者不是这条评论的发布人，没有权限删除该评论'
+            })
+        }
+        await req.comments.remove()
+        res.status(204).end()
     } catch (err) {
         next(err)
     }

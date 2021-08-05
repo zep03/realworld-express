@@ -27,10 +27,10 @@ router.delete('/articles/:articleId', auth, articleValidator.deleteArticle, arti
 router.post('/articles/:articleId/comments', auth, articleValidator.addComment, articleController.addComments)
 
 // 从文章中获取评论
-router.get('/articles/:articleId/comments', articleController.getComments)
+router.get('/articles/:articleId/comments', articleValidator.getComment, articleController.getComments)
 
 // 删除评论
-router.delete('/articles/:articleId/comments/:id', articleController.deleteComments)
+router.delete('/articles/:articleId/comments/:commentId', auth, articleValidator.deleteComment, articleController.deleteComments)
 
 // 收藏文章
 router.post('/articles/:articleId/favorite', articleController.favoriteArticle)

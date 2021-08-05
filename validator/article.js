@@ -66,3 +66,52 @@ exports.addComment = [
         next()
     }
 ]
+
+exports.getComment = [
+    validate([
+        validate.isValidObjectId(['params'], 'articleId')
+    ]),
+    async (req, res, next) => {
+        const articleId = req.params.articleId
+        const article = await Article.findById(articleId)
+        req.article = article
+        if(!article) {
+            return res.status(404).json({
+                errors: '文章ID错误，不存在该文章'
+            })
+        }
+        next()
+    }
+]
+
+exports.deleteComment = [
+    validate([
+        validate.isValidObjectId(['params'], 'articleId')
+    ]),
+    validate([
+        validate.isValidObjectId(['params'], 'commentId')
+    ]),
+    async (req, res, next) => {
+        const articleId = req.params.articleId
+        const article = await Article.findById(articleId)
+        if(!article) {
+            return res.status(404).json({
+                errors: '文章ID错误，不存在该文章'
+            })
+        }
+        req.article = article
+        next()
+    },
+    async (req, res, next) => {
+        const commentId = mongoose.Types.ObjectId(req.params.commentId)
+        const comments = await Comment.findById(commentId)
+        if(!comments) {
+            return res.status(404).json({
+                errors: '评论ID错误，不存在该评论'
+            })
+        }
+        // console.log(comments)
+        req.comments = comments
+        next()
+    }
+]

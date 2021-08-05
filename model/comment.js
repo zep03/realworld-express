@@ -14,6 +14,12 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    // 评论的文章的id
+    articleId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Article',
+        required: true
+    },
     ...baseModel
 })
 

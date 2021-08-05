@@ -3,21 +3,22 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    res.send('Hello World')
+    res.render('index.html')
 })
 
-// 用户相关的路由
-router.use(require('./user.js'))
+router.get('/login', (req, res) => {
+    res.render('login.html', {
+        isLogin: true
+    })
+})
 
-// 用户资料相关路由
-router.use(require('./profile.js'))
+router.get('/register', (req, res) => {
+    res.render('login.html')
+})
 
-// 文章相关的路由
-router.use(require('./article.js'))
-
-// 标签相关的路由
-router.use(require('./tag.js'))
-
+router.get('/profile', (req, res) => {
+    res.render('profile.html')
+})
 
 
 
