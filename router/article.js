@@ -5,39 +5,14 @@ const articleValidator = require('../validator/article.js')
 
 const router = express.Router()
 
-// 获取文章列表
-router.get('/articles', articleController.getArticles)
 
-// 获取用户关注的作者的文章列表
-router.get('/articles/feed', articleController.getFeedArticles)
+router.get('/', articleController.showIndex)
 
-// 获取文章
-router.get('/articles/:articleId', articleValidator.getArticle ,articleController.getArticle)
+router.get('/editor', articleController.showEditor)
 
-// 创建文章
-router.post('/articles', auth, articleValidator.createArticle, articleController.createArticle)
+router.get('/editor:articleId', articleController.showEditor)
 
-// 更新文章
-router.put('/articles/:articleId', auth, articleValidator.updateArticle, articleController.updateArticle)
-
-// 删除文章
-router.delete('/articles/:articleId', auth, articleValidator.deleteArticle, articleController.deleteArticle)
-
-// 为文章添加评论
-router.post('/articles/:articleId/comments', auth, articleValidator.addComment, articleController.addComments)
-
-// 从文章中获取评论
-router.get('/articles/:articleId/comments', articleValidator.getComment, articleController.getComments)
-
-// 删除评论
-router.delete('/articles/:articleId/comments/:commentId', auth, articleValidator.deleteComment, articleController.deleteComments)
-
-// 收藏文章
-router.post('/articles/:articleId/favorite', articleController.favoriteArticle)
-
-// 取消收藏文章
-router.delete('/articles/:articleId/favorite', articleController.unFavoriteArticle)
-
+router.get('/article/:articleId', articleController.showArticle)
 
 
 module.exports = router

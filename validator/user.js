@@ -2,7 +2,6 @@ const { body } = require('express-validator')
 const validate = require('../middleware/validate.js')
 const { User } = require('../model/index.js')
 const md5 = require('../util/md5.js')
-
 exports.register = validate([
     // 1.配置验证规则
     body('user.username')

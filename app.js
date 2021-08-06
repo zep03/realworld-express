@@ -3,10 +3,31 @@ const morgan = require('morgan')
 const path = require('path')
 const router = require('./router/index.js')
 const errorhandler = require('errorhandler')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
+const mongoose = require('mongoose')
+const { sessionSecret } = require('./config/config.default.js')
 require('./model/index.js')
 const app = express()
-
 const template = require('art-template')
+// 配置使用session中间件
+// 存储session       1.生成session  2.存储数据
+//              req.session.xxx = 'xxx'
+// 获取session       1.根据session id 来获取session容器中的数据
+//              req.session.xxx
+// 注意： 默认数据存储在内存中
+app.use(session({
+    secret: sessionSecret, // 签发session id 的密钥
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 // 过期时间，单位是毫秒
+        // secure: true // true表示只要https协议才会收发cookie
+    }, // 对用于保存session id 的cookie的设置
+    store: MongoStore.create({
+        mongoUrl: 'mongodb://admin:admin@localhost:27017/realworld-express?authSource=admin',
+    })  // 将数据持久化到mongodb数据库中
+}))
 
 // 当渲染以 .art结尾的资源文件的时候 使用express-art-template
 app.engine('html', require('express-art-template'))

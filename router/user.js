@@ -6,25 +6,16 @@ const auth = require('../middleware/auth.js')
 const router = express.Router()
 
 
-// 用户登录
-router.post('/users/login', userValidator.login , userController.login)
+router.get('/login', userController.showLogin)
 
-// 用户注册
-router.post('/users', userValidator.register,
-    //  (req, res, next) => { // 2.判断验证结果
-    //     const errors = validationResult(req)
-    //     if (!errors.isEmpty()) {
-    //         return res.status(400).json({ errors: errors.array() })
-    //     }
-    //     next()
-    // }, 
-    userController.register) // 3.通过验证，执行具体的控制器处理
+router.get('/register', userController.showRegister)
+router.post('/register', userValidator.register, userController.register)
 
-// 获取当前登录用户
-router.get('/user', auth, userController.getCurrentUser)
+router.get('/settings', userController.showSettings)
 
-// 更新当前登录的用户资料
-router.put('/user', auth, userController.updateCurrentUser)
+router.get('/profile/:username', userController.showProfile)
+
+router.get('/profile/:username/favorites', userController.showProfile)
 
 
 module.exports = router

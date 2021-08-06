@@ -1,10 +1,9 @@
 {{ extend './layout/layout.html' }}
 
 {{ block 'body' }}
-<div class="auth-page">
+<div class="auth-page" id="login">
     <div class="container page">
         <div class="row">
-
             <div class="col-md-6 offset-md-3 col-xs-12">
                 <h1 class="text-xs-center">{{ isLogin ? '登录' : '注册' }}</h1>
                 <p class="text-xs-center">
@@ -12,20 +11,30 @@
                 </p>
 
                 <ul class="error-messages">
-                    <li>That email is already taken</li>
+                    <li v-for="(error, index) in errors" :key="index">{% error.msg %}</li>
                 </ul>
 
-                <form>
+
+<!--                {{ if errors }}-->
+<!--                <ul class="error-messages">-->
+<!--                    {{ each errors }}-->
+<!--                    <li>{{ $value }}</li>-->
+<!--                    {{ /each }}-->
+<!--                </ul>-->
+<!--                {{ /if }}-->
+
+<!--                <form action="/register" method="post">-->
+                <form @submit.prevent="handleSubmit">
                     {{ if !isLogin }}
                     <fieldset class="form-group">
-                        <input class="form-control form-control-lg" type="text" placeholder="Your Name">
+                        <input v-model="user.username" name="username" class="form-control form-control-lg" type="text" placeholder="Your Name">
                     </fieldset>
                     {{ /if }}
                     <fieldset class="form-group">
-                        <input class="form-control form-control-lg" type="text" placeholder="Email">
+                        <input v-model="user.email" name="email" class="form-control form-control-lg" type="text" placeholder="Email">
                     </fieldset>
                     <fieldset class="form-group">
-                        <input class="form-control form-control-lg" type="password" placeholder="Password">
+                        <input v-model="user.password" name="password" class="form-control form-control-lg" type="password" placeholder="Password">
                     </fieldset>
                     <button class="btn btn-lg btn-primary pull-xs-right">
                         {{ isLogin ? '登录' : '注册' }}
@@ -37,4 +46,47 @@
     </div>
 </div>
 
+{{ /block }}
+
+{{ block 'script' }}
+<script>
+    // 通过使用匿名函数自执行来限制这个new出来的vue的作用域仅限于当前文件，避免全局污染问题
+    ;(()=>{
+        const app = new Vue({
+            el: '#login',
+            data: {
+              user: {
+                  username: '',
+                  email: '',
+                  password: ''
+              },
+              errors: []
+            },
+            // delimiters: ['{%', '%}'], // 修改渲染数据的界定符
+            methods: {
+                async handleSubmit () {
+                    // 1.客户端表单验证
+                    // 2.验证通过，提交表单
+                    try {
+                        // axios 默认提交的数据格式为：application/json
+                        const { data } = await axios.post('/register', {
+                            user: this.user
+                        })
+                        // 清除错误信息
+                        this.errors = []
+
+                        // 跳转到首页
+                        window.location.href = '/'
+                    } catch (err) {
+                        console.dir(err)
+                        if (err.response.status === 400) {
+                            this.errors = err.response.data.errors
+                            console.log('注册失败', err.response.data.errors)
+                        }
+                    }
+                }
+            }
+        })
+    })()
+</script>
 {{ /block }}
