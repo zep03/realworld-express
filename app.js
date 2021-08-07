@@ -10,6 +10,9 @@ const { sessionSecret } = require('./config/config.default.js')
 require('./model/index.js')
 const app = express()
 const template = require('art-template')
+
+
+
 // 配置使用session中间件
 // 存储session       1.生成session  2.存储数据
 //              req.session.xxx = 'xxx'
@@ -28,6 +31,13 @@ app.use(session({
         mongoUrl: 'mongodb://admin:admin@localhost:27017/realworld-express?authSource=admin',
     })  // 将数据持久化到mongodb数据库中
 }))
+
+// 确保挂载到 Session 初始化配置之后
+app.use((req, res, next) => {
+    // 统一给模板添加数据
+    app.locals.sessionUser = req.session.user
+    next()
+})
 
 // 当渲染以 .art结尾的资源文件的时候 使用express-art-template
 app.engine('html', require('express-art-template'))

@@ -6,10 +6,15 @@
         <div class="row">
             <div class="col-md-6 offset-md-3 col-xs-12">
                 <h1 class="text-xs-center">{{ isLogin ? '登录' : '注册' }}</h1>
+                {{ if isLogin }}
                 <p class="text-xs-center">
-                    <a href="">Have an account?</a>
+                    <a href="/register">没有账号？</a>
                 </p>
-
+                {{ else }}
+                <p class="text-xs-center">
+                    <a href="/login">已有账号</a>
+                </p>
+                {{ /if }}
                 <ul class="error-messages">
                     <li v-for="(error, index) in errors" :key="index">{% error.msg %}</li>
                 </ul>
@@ -68,8 +73,9 @@
                     // 1.客户端表单验证
                     // 2.验证通过，提交表单
                     try {
+                        const url = window.location.pathname === '/login' ? '/login' : '/register'
                         // axios 默认提交的数据格式为：application/json
-                        const { data } = await axios.post('/register', {
+                        const { data } = await axios.post(url, {
                             user: this.user
                         })
                         // 清除错误信息

@@ -30,43 +30,48 @@
                     </ul>
                 </div>
 
+                {{ each articles }}
                 <div class="article-preview">
                     <div class="article-meta">
-                        <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
+                        <a href="profile.html"><img src="{{ $value.author.image }}" /></a>
                         <div class="info">
-                            <a href="" class="author">Eric Simons</a>
+                            <a href="" class="author">{{ $value.author.username }}</a>
                             <span class="date">January 20th</span>
                         </div>
                         <button class="btn btn-outline-primary btn-sm pull-xs-right">
                             <i class="ion-heart"></i> 29
                         </button>
                     </div>
-                    <a href="" class="preview-link">
-                        <h1>How to build webapps that scale</h1>
-                        <p>This is the description for the post.</p>
+                    <a href="/article/<%= $value._id.toString() %>" class="preview-link">
+                        <h1>{{ $value.title }}</h1>
+                        <p>{{ $value.description }}</p>
                         <span>Read more...</span>
                     </a>
                 </div>
+                {{ /each }}
+                <!--分页-->
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item <%= page <= 1  ? 'disabled' : '' %>">
+                            <a class="page-link" href="/?page=<%= page-1 %>" >
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        <% for(let i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item <%= i===page ? 'active' : '' %>"><a class="page-link" href="/?page=<%= i %>"> <%= i %></a></li>
+                        <% } %>
 
-                <div class="article-preview">
-                    <div class="article-meta">
-                        <a href="profile.html"><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-                        <div class="info">
-                            <a href="" class="author">Albert Pai</a>
-                            <span class="date">January 20th</span>
-                        </div>
-                        <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                            <i class="ion-heart"></i> 32
-                        </button>
-                    </div>
-                    <a href="" class="preview-link">
-                        <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                        <p>This is the description for the post.</p>
-                        <span>Read more...</span>
-                    </a>
-                </div>
-
+                        <li class="page-item <%= page >= totalPage ? 'disabled' : '' %>">
+                            <a class="page-link" href="/?page=<%= page+1 %>">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
+
 
             <div class="col-md-3">
                 <div class="sidebar">

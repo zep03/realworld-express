@@ -10,6 +10,31 @@ exports.showLogin = async (req, res, next) => {
     }
 }
 
+exports.login = async (req, res, next) => {
+    try {
+        const user = req.user
+        // 1.保存登录状态
+        req.session.user = user
+        // 2.跳转到首页
+        res.status(200).json({
+            user: user
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.logout = async (req, res, next) => {
+    try {
+        // 清除用户的登录状态
+        req.session.user = null
+        // 跳转到首页
+        res.redirect('/')
+    } catch (err) {
+        next(err)
+    }
+}
+
 exports.showRegister = async (req, res, next) => {
     try {
         res.render('login.html')
